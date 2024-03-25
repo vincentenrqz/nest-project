@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { TaskTypeDto } from './dtos/tasktypes.dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { timeout } from 'rxjs';
-import { time } from 'console';
 
 @Injectable()
 export class TasktypesService {

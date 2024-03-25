@@ -16,7 +16,7 @@ import { UsersService } from './users.service';
 import mongoose from 'mongoose';
 
 @Controller('users')
-@UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+@UsePipes(new ValidationPipe({ whitelist: true }))
 export class UsersController {
   constructor(private userService: UsersService) {}
   @Get()
