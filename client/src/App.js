@@ -49,6 +49,37 @@ const tempWatchedData = [
   },
 ];
 
+const Search = ({ query, searchFilter }) => {
+  return (
+    <>
+      <input
+        className="search"
+        type="text"
+        placeholder="Search movies..."
+        value={query}
+        onChange={(e) => searchFilter(e)}
+      />
+    </>
+  );
+};
+
+const Logo = () => {
+  return (
+    <div className="logo">
+      <span role="img">🍿</span>
+      <h1>usePopcorn</h1>
+    </div>
+  );
+};
+
+const NumResults = ({ movies }) => {
+  return (
+    <p className="num-results">
+      Found <strong>{movies.length}</strong> results
+    </p>
+  );
+};
+
 export default function App() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState(tempMovieData);
@@ -63,11 +94,11 @@ export default function App() {
 
   return (
     <>
-      <NavBar
-        movies={filteredMovies}
-        query={query}
-        searchFilter={searchFilter}
-      />
+      <NavBar movies={filteredMovies} query={query}>
+        <Logo />
+        <Search searchFilter={searchFilter} />
+        <NumResults movies={movies} />
+      </NavBar>
       <Main tempWatchedData={tempWatchedData} movies={filteredMovies} />
     </>
   );

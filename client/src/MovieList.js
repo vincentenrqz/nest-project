@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import Button from "./Button";
+import React from "react";
 
-const Movie = ({ movie, children }) => {
+const Movie = ({ movie }) => {
   return (
     <>
       <li>
