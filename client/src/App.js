@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import NavBar from "./NavBar";
 import Main from "./Main";
+import MovieList from "./MovieList";
+import Box from "./Box";
+import WatchedList from "./WatchedList";
+import MovieSummary from "./MovieSummary";
 
 const tempMovieData = [
   {
@@ -83,10 +87,14 @@ const NumResults = ({ movies }) => {
 export default function App() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
 
-  const filteredMovies = movies.filter((item) =>
-    item.Title.toLowerCase().includes(query.toLowerCase())
-  );
+  useEffect(() => {
+    const filteredMovies = movies.filter((item) =>
+      item.Title.toLowerCase().includes(query.toLowerCase())
+    );
+    setMovies(filteredMovies);
+  }, [query]);
 
   const searchFilter = (e) => {
     setQuery(e.target.value);
@@ -94,12 +102,32 @@ export default function App() {
 
   return (
     <>
-      <NavBar movies={filteredMovies} query={query}>
+      <NavBar movies={movies} query={query}>
         <Logo />
-        <Search searchFilter={searchFilter} />
+        <Search searchFilter={searchFilter} query={query} />
         <NumResults movies={movies} />
       </NavBar>
-      <Main tempWatchedData={tempWatchedData} movies={filteredMovies} />
+      <Main>
+        {/* Passing elements as props*/}
+        {/* <Box element={<MovieList movies={movies} />} />
+        <Box
+          element={
+            <>
+              <MovieSummary watched={watched} />
+              <WatchedList watched={watched} />
+            </>
+          }
+        /> */}
+
+        {/* Passing elements as children */}
+        <Box>
+          <MovieList movies={movies} />
+        </Box>
+        <Box>
+          <MovieSummary watched={watched} />
+          <WatchedList watched={watched} />
+        </Box>
+      </Main>
     </>
   );
 }
