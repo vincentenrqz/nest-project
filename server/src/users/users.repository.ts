@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/users.schema';
 import { Model } from 'mongoose';
 import { AssignRoleDto, CreateUserDto, UpdateUserDto } from './dtos/user.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersRepository {
@@ -13,8 +14,22 @@ export class UsersRepository {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    const createUser = new this.userModel(createUserDto);
+    const { password, ...userData } = createUserDto;
+
+    const saltRounds = 5;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const createUser = new this.userModel({
+      ...userData,
+      password: hashedPassword,
+    });
+
     return await createUser.save();
+  }
+
+  async registerUser(email: string, password: string) {
+    const user = new this.userModel({ email, password });
+    return await user.save();
   }
 
   async getUserById(id: string) {
@@ -22,11 +37,11 @@ export class UsersRepository {
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
-    const user = this.userModel.findByIdAndUpdate(id, updateUserDto, {
+    const user = await this.userModel.findByIdAndUpdate(id, updateUserDto, {
       new: true,
     });
 
-    return await user;
+    return user;
   }
 
   async deleteUser(id: string) {
@@ -41,5 +56,9 @@ export class UsersRepository {
     );
 
     return await findUser;
+  }
+
+  async findUserByEmail(email: string) {
+    return await this.userModel.findOne({ email }).exec();
   }
 }

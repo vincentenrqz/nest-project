@@ -29,4 +29,12 @@ export class UsersService {
   assignRole(id: string, assignRole: AssignRoleDto) {
     return this.userRepo.assignRole(id, assignRole);
   }
+
+  findUserByEmail(email: string) {
+    return this.userRepo.findUserByEmail(email);
+  }
+
+  signUp(email: string, password: string) {
+    return this.userRepo.registerUser(email, password);
+  }
 }

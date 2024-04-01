@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsNotEmpty } from 'class-validator';
+import { Exclude } from 'class-transformer';
 import mongoose from 'mongoose';
 import { Role } from 'src/roles/schemas/roles.schema';
 
@@ -7,15 +7,18 @@ export type UserDocument = User & Document;
 
 @Schema({ timestamps: true })
 export class User {
-  @Prop({ required: true })
+  @Prop({ required: false, default: '' })
   firstName: string;
 
-  @Prop({ required: true })
-  @IsNotEmpty()
+  @Prop({ required: false, default: '' })
   lastName: string;
 
   @Prop({ required: true })
   email: string;
+
+  @Prop({ required: true })
+  @Exclude()
+  password: string;
 
   @Prop({
     required: false,
