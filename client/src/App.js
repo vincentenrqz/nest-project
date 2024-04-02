@@ -89,12 +89,9 @@ export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
 
-  useEffect(() => {
-    const filteredMovies = movies.filter((item) =>
-      item.Title.toLowerCase().includes(query.toLowerCase())
-    );
-    setMovies(filteredMovies);
-  }, [query]);
+  const filteredMovies = movies.filter((item) =>
+    item.Title.toLowerCase().includes(query.toLowerCase())
+  );
 
   const searchFilter = (e) => {
     setQuery(e.target.value);
@@ -102,10 +99,10 @@ export default function App() {
 
   return (
     <>
-      <NavBar movies={movies} query={query}>
+      <NavBar movies={filteredMovies} query={query}>
         <Logo />
         <Search searchFilter={searchFilter} query={query} />
-        <NumResults movies={movies} />
+        <NumResults movies={filteredMovies} />
       </NavBar>
       <Main>
         {/* Passing elements as props*/}
@@ -121,7 +118,7 @@ export default function App() {
 
         {/* Passing elements as children */}
         <Box>
-          <MovieList movies={movies} />
+          <MovieList movies={filteredMovies} />
         </Box>
         <Box>
           <MovieSummary watched={watched} />

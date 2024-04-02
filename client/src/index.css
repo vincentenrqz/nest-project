@@ -47,7 +47,7 @@ body {
   display: flex;
   gap: 2.4rem;
   justify-content: center;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .box {
@@ -57,6 +57,12 @@ body {
   border-radius: 0.9rem;
   overflow: auto;
   position: relative;
+  scroll-behavior: smooth;
+}
+
+.box::-webkit-scrollbar,
+.list::-webkit-scrollbar {
+  display: none;
 }
 
 .loader {
@@ -139,7 +145,7 @@ body {
 .list {
   list-style: none;
   padding: 0.8rem 0;
-  overflow: auto;
+  overflow: scroll;
 }
 
 .list-watched {
