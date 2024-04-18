@@ -5,6 +5,7 @@ import MovieList from "./MovieList";
 import Box from "./Box";
 import WatchedList from "./WatchedList";
 import MovieSummary from "./MovieSummary";
+import Loader from "./Loader";
 
 const tempMovieData = [
   {
@@ -84,25 +85,78 @@ const NumResults = ({ movies }) => {
   );
 };
 
+const ErrorMessage = ({ message }) => {
+  return (
+    <p className="error">
+      <span>⛔ {message}</span>
+    </p>
+  );
+};
+
+const MovieDetails = ({ selectedId }) => {
+  return <div className="details">{selectedId}</div>;
+};
+
+const KEY = "add29be9";
+
 export default function App() {
   const [query, setQuery] = useState("");
-  const [movies, setMovies] = useState(tempMovieData);
+  const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [selectedId, setSelectedId] = useState(null);
 
-  const filteredMovies = movies.filter((item) =>
-    item.Title.toLowerCase().includes(query.toLowerCase())
-  );
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        setIsLoading(true);
+        setErrorMsg("");
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+        );
+
+        if (!res.ok) {
+          throw new Error("Something went wrong with fetching movies");
+        }
+
+        const data = await res.json();
+        if (data.Response === "False") {
+          throw new Error("Movie not found");
+        }
+
+        setMovies(data.Search);
+      } catch (err) {
+        setErrorMsg(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (query.length < 3) {
+      setMovies([]);
+      setErrorMsg("");
+      return;
+    }
+
+    fetchMovies();
+  }, [query]);
 
   const searchFilter = (e) => {
     setQuery(e.target.value);
   };
 
+  const handleSelectMovie = (id) => {
+    setSelectedId(id);
+  };
+
+  console.log("selectedId", selectedId);
   return (
     <>
-      <NavBar movies={filteredMovies} query={query}>
+      <NavBar movies={movies} query={query}>
         <Logo />
         <Search searchFilter={searchFilter} query={query} />
-        <NumResults movies={filteredMovies} />
+        {/* <NumResults movies={movies} /> */}
       </NavBar>
       <Main>
         {/* Passing elements as props*/}
@@ -118,11 +172,21 @@ export default function App() {
 
         {/* Passing elements as children */}
         <Box>
-          <MovieList movies={filteredMovies} />
+          {isLoading && <Loader />}
+          {!isLoading && !errorMsg && (
+            <MovieList movies={movies} handleSelectMovie={handleSelectMovie} />
+          )}
+          {errorMsg && <ErrorMessage message={errorMsg} />}
         </Box>
         <Box>
-          <MovieSummary watched={watched} />
-          <WatchedList watched={watched} />
+          {selectedId ? (
+            <MovieDetails selectedId={selectedId} />
+          ) : (
+            <>
+              <MovieSummary watched={watched} />
+              <WatchedList watched={watched} />
+            </>
+          )}
         </Box>
       </Main>
     </>
