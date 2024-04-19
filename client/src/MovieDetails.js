@@ -27,6 +27,9 @@ const MovieDetails = ({
   } = movie;
 
   const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
+  const watchUserRating = watched.find(
+    (movie) => movie.imdbID === selectedId
+  )?.userRating;
 
   const handleAdd = () => {
     const newWatchedMove = {
@@ -42,6 +45,20 @@ const MovieDetails = ({
     onAddWatched(newWatchedMove);
     closeMovie();
   };
+
+  useEffect(() => {
+    const callback = () => {
+      document.addEventListener("keydown", function (e) {
+        if (e.code === "Escape") {
+          closeMovie();
+        }
+      });
+    };
+
+    return function () {
+      document.removeEventListener("keydown", callback);
+    };
+  }, [closeMovie]);
 
   useEffect(() => {
     const selectedMovie = async () => {
@@ -64,7 +81,14 @@ const MovieDetails = ({
     selectedMovie();
   }, [selectedId]);
 
-  console.log("userRating", userRating);
+  useEffect(() => {
+    if (!title) return;
+    document.title = `Movie | ${title}`;
+
+    return function () {
+      document.title = "usePopcorn";
+    };
+  }, [title]);
 
   return (
     <div className="details">
@@ -105,7 +129,7 @@ const MovieDetails = ({
                   )}
                 </>
               ) : (
-                <p>You rated with movie</p>
+                <p>You rated with movie {watchUserRating} ⭐</p>
               )}
             </div>
             <p>
