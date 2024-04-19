@@ -18,15 +18,14 @@ const Movie = ({ movie, handleSelectMovie }) => {
 const MovieList = ({ movies, handleSelectMovie }) => {
   return (
     <>
-      <ul className="list">
+      <ul className="list list-movies">
         {movies &&
           movies.length > 0 &&
           movies?.map((movie) => (
             <Movie
               movie={movie}
               key={movie.imdbID}
-              handleSelectMovie={handleSelectMovie}
-            ></Movie>
+              handleSelectMovie={handleSelectMovie}></Movie>
           ))}
       </ul>
     </>

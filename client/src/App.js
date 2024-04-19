@@ -6,6 +6,7 @@ import Box from "./Box";
 import WatchedList from "./WatchedList";
 import MovieSummary from "./MovieSummary";
 import Loader from "./Loader";
+import MovieDetails from "./MovieDetails";
 
 const tempMovieData = [
   {
@@ -93,10 +94,6 @@ const ErrorMessage = ({ message }) => {
   );
 };
 
-const MovieDetails = ({ selectedId }) => {
-  return <div className="details">{selectedId}</div>;
-};
-
 const KEY = "add29be9";
 
 export default function App() {
@@ -147,10 +144,13 @@ export default function App() {
   };
 
   const handleSelectMovie = (id) => {
-    setSelectedId(id);
+    setSelectedId((selectedId) => (id === selectedId ? null : id));
   };
 
-  console.log("selectedId", selectedId);
+  const handleCloseMovie = () => {
+    setSelectedId(null);
+  };
+
   return (
     <>
       <NavBar movies={movies} query={query}>
@@ -180,7 +180,11 @@ export default function App() {
         </Box>
         <Box>
           {selectedId ? (
-            <MovieDetails selectedId={selectedId} />
+            <MovieDetails
+              movieKey={KEY}
+              selectedId={selectedId}
+              closeMovie={handleCloseMovie}
+            />
           ) : (
             <>
               <MovieSummary watched={watched} />
