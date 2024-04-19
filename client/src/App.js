@@ -99,7 +99,7 @@ const KEY = "add29be9";
 export default function App() {
   const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [selectedId, setSelectedId] = useState(null);
@@ -151,12 +151,17 @@ export default function App() {
     setSelectedId(null);
   };
 
+  const handleAddWatch = (movie) => {
+    setWatched((watched) => [...watched, movie]);
+  };
+
+  console.log("watched", watched);
   return (
     <>
       <NavBar movies={movies} query={query}>
         <Logo />
         <Search searchFilter={searchFilter} query={query} />
-        {/* <NumResults movies={movies} /> */}
+        <NumResults movies={movies} />
       </NavBar>
       <Main>
         {/* Passing elements as props*/}
@@ -184,6 +189,8 @@ export default function App() {
               movieKey={KEY}
               selectedId={selectedId}
               closeMovie={handleCloseMovie}
+              onAddWatched={handleAddWatch}
+              watched={watched}
             />
           ) : (
             <>
