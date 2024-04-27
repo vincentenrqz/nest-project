@@ -7,23 +7,18 @@ import WatchedList from "./WatchedList";
 import MovieSummary from "./MovieSummary";
 import Loader from "./Loader";
 import MovieDetails from "./MovieDetails";
+import { useMovies } from "./customHooks/useMovies";
+import { useLocalStorageState } from "./customHooks/useLocalStorageState";
+import { useKey } from "./customHooks/useKey";
 
 const Search = ({ query, searchFilter }) => {
   const inputEl = useRef(null);
 
-  useEffect(() => {
+  useKey("Enter", function () {
     if (document.activeElement === inputEl.current) return;
-    const callback = (e) => {
-      if (e.code === "Enter") {
-        inputEl.current.focus();
-        // searchFilter("");
-      }
-    };
-
-    document.addEventListener("keydown", callback);
-
-    return () => document.addEventListener("keydown", callback);
-  }, [searchFilter]);
+    inputEl.current.focus();
+    // searchFilter("");
+  });
 
   return (
     <>
@@ -68,60 +63,9 @@ const KEY = "add29be9";
 
 export default function App() {
   const [query, setQuery] = useState(() => localStorage.getItem("search"));
-  const [movies, setMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
   const [selectedId, setSelectedId] = useState(null);
-  const [watched, setWatched] = useState(function () {
-    const storedValue = localStorage.getItem("watched");
-    return JSON.parse(storedValue);
-  });
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const fetchMovies = async () => {
-      try {
-        setIsLoading(true);
-        setErrorMsg("");
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
-          { signal: controller.signal }
-        );
-
-        if (!res.ok) {
-          throw new Error("Something went wrong with fetching movies");
-        }
-
-        const data = await res.json();
-        if (data.Response === "False") {
-          throw new Error("Movie not found");
-        }
-
-        setMovies(data.Search);
-        setErrorMsg("");
-      } catch (err) {
-        if (err.name !== "AbortError") {
-          setErrorMsg(err.message);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (query.length < 3) {
-      setMovies([]);
-      setErrorMsg("");
-      return;
-    }
-
-    handleCloseMovie();
-    fetchMovies();
-
-    return function () {
-      controller.abort();
-    };
-  }, [query]);
+  const { movies, isLoading, errorMsg } = useMovies(query);
+  const [watched, setWatched] = useLocalStorageState([], "watched");
 
   const searchFilter = (e) => {
     setQuery(e.target.value);

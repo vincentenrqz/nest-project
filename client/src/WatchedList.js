@@ -21,8 +21,7 @@ const WatchedMovie = ({ movie, onDeleteWatched }) => {
 
         <button
           className="btn-delete"
-          onClick={() => onDeleteWatched(movie.imdbID)}
-        >
+          onClick={() => onDeleteWatched(movie.imdbID)}>
           X
         </button>
       </div>
@@ -31,6 +30,7 @@ const WatchedMovie = ({ movie, onDeleteWatched }) => {
 };
 
 const WatchedList = ({ watched, onDeleteWatched }) => {
+  console.log("watched", watched);
   return (
     <>
       {watched.map((movie) => (

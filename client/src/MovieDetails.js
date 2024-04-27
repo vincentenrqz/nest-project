@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import StarRating from "./StarRating";
 import Loader from "./Loader";
+import { useKey } from "./customHooks/useKey";
 
 const MovieDetails = ({
   movieKey,
@@ -12,6 +13,15 @@ const MovieDetails = ({
   const [movie, setMovie] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [userRating, setUserRating] = useState("");
+  const countRef = useRef(0); // Counts how many clicks from userRating. preserve values across re-renders
+
+  useEffect(() => {
+    const refCount = () => {
+      if (userRating) countRef.current++;
+    };
+
+    refCount();
+  }, [userRating]);
 
   const {
     Title: title,
@@ -40,25 +50,14 @@ const MovieDetails = ({
       imdbRating: Number(imdbRating),
       runtime: Number(runtime.split(" ").at(0)),
       userRating,
+      countRatingDecisions: countRef.current,
     };
 
     onAddWatched(newWatchedMove);
     closeMovie();
   };
 
-  useEffect(() => {
-    const callback = () => {
-      document.addEventListener("keydown", function (e) {
-        if (e.code === "Escape") {
-          closeMovie();
-        }
-      });
-    };
-
-    return function () {
-      document.removeEventListener("keydown", callback);
-    };
-  }, [closeMovie]);
+  useKey("Escape", closeMovie);
 
   useEffect(() => {
     const selectedMovie = async () => {
