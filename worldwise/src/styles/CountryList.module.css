@@ -10,3 +10,12 @@
   align-content: start;
   gap: 1.6rem;
 }
+
+.countryList::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* Hide scrollbar for Firefox */
+.countryList {
+  scrollbar-width: none;
+}
